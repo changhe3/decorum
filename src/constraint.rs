@@ -18,13 +18,15 @@ pub trait SubsetOf<P> {}
 
 impl<P, Q> SubsetOf<Q> for P where Q: SupersetOf<P> {}
 
+pub trait Sealed {}
+
 /// Describes constraints on the set of floating-point values that a proxy type
 /// may take.
 ///
 /// This trait expresses a constraint by filtering values. Note that constraints
 /// require `Member<RealClass>`, meaning that the class of real numbers must
 /// always be supported and is implied.
-pub trait Constraint<T>: Copy + Member<RealClass> + Sized
+pub trait Constraint<T>: Copy + Member<RealClass> + Sized + Sealed
 where
     T: Float + Primitive,
 {
@@ -60,6 +62,8 @@ where
     }
 }
 
+impl<T> Sealed for UnitConstraint<T> where T: Float + Primitive {}
+
 impl<T> SupersetOf<NotNanConstraint<T>> for UnitConstraint<T> where T: Float + Primitive {}
 
 impl<T> SupersetOf<FiniteConstraint<T>> for UnitConstraint<T> where T: Float + Primitive {}
@@ -84,12 +88,13 @@ where
     fn filter(value: T) -> Option<T> {
         if value.is_nan() {
             None
-        }
-        else {
+        } else {
             Some(value)
         }
     }
 }
+
+impl<T> Sealed for NotNanConstraint<T> where T: Float + Primitive {}
 
 impl<T> SupersetOf<FiniteConstraint<T>> for NotNanConstraint<T> where T: Float + Primitive {}
 
@@ -111,9 +116,10 @@ where
     fn filter(value: T) -> Option<T> {
         if value.is_nan() || value.is_infinite() {
             None
-        }
-        else {
+        } else {
             Some(value)
         }
     }
 }
+
+impl<T> Sealed for FiniteConstraint<T> where T: Float + Primitive {}

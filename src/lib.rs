@@ -90,6 +90,7 @@ mod proxy;
 use crate::cmp::IntrinsicOrd;
 use crate::constraint::{FiniteConstraint, NotNanConstraint, UnitConstraint};
 
+pub use crate::constraint::Constraint;
 pub use crate::canonical::ToCanonicalBits;
 pub use crate::primitive::Primitive;
 pub use crate::proxy::ConstrainedFloat;
